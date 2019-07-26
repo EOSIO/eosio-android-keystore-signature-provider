@@ -1,0 +1,1 @@
+# eosio-android-keystore-signature-provider
