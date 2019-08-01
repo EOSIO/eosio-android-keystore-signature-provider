@@ -36,12 +36,13 @@ class EosioAndroidKeyStoreUtility {
         private const val ANDROID_KEYSTORE: String = "AndroidKeyStore"
         private const val ANDROID_ECDSA_SIGNATURE_ALGORITHM: String = "SHA256withECDSA"
         private const val SECP256R1_CURVE_NAME = "secp256r1"
+        private const val PEM_OBJECT_TYPE_PUBLIC_KEY = "PUBLIC KEY"
 
         /**
          * Generate a new key inside AndroidKeyStore by the given [keyGenParameterSpec] and return the new key in EOS format
-         * 
+         *
          * The given [keyGenParameterSpec] is the parameter specification to generate new key, identity of the key could be set with it. This spec has to follow:
-         * 
+         *
          * - [KeyGenParameterSpec] must includes [KeyProperties.PURPOSE_SIGN]
          * - [KeyGenParameterSpec.getAlgorithmParameterSpec] must be [ECGenParameterSpec]
          * - [KeyGenParameterSpec.getAlgorithmParameterSpec]'s curve name must be [SECP256R1_CURVE_NAME]
@@ -75,6 +76,19 @@ class EosioAndroidKeyStoreUtility {
         }
 
         /**
+         * Generate a new key inside AndroidKeyStore by the given [alias] and return the new key in EOS format
+         *
+         * The given [alias] is the identity of the key. The new key will be generated with the Default [KeyGenParameterSpec] from the [generateDefaultKeyGenParameterSpecBuilder]
+         */
+        @JvmStatic
+        fun generateAndroidKeyStoreKey(alias: String): String {
+            // Create a default KeyGenParameterSpec
+            val keyGenParameterSpec: KeyGenParameterSpec = this.generateDefaultKeyGenParameterSpecBuilder(alias).build()
+
+            return this.generateAndroidKeyStoreKey(keyGenParameterSpec)
+        }
+
+        /**
          * Convert ECPublic Key (SECP256R1) that reside in AndroidKeyStore to EOS format
          * @param androidECPublicKey ECPublicKey - the ECPublic Key (SECP256R1) to convert
          * @return String - EOS format of the input key
@@ -96,7 +110,7 @@ class EosioAndroidKeyStoreUtility {
 
             val stringWriter: StringWriter = StringWriter()
             val pemWriter: PemWriter = PemWriter(stringWriter)
-            val pemObject: PemObject = PemObject("PUBLIC KEY", asn1Sequence.encoded)
+            val pemObject: PemObject = PemObject(PEM_OBJECT_TYPE_PUBLIC_KEY, asn1Sequence.encoded)
             pemWriter.writeObject(pemObject)
             pemWriter.flush()
 
@@ -113,7 +127,7 @@ class EosioAndroidKeyStoreUtility {
          * @return List<String> - List of SECP256R1 keys inside AndroidKeyStore
          */
         @JvmStatic
-        fun getAllAndroidKeyStoreKeyInEOSFormat(
+        fun getAllAndroidKeyStoreKeysInEOSFormat(
             password: KeyStore.ProtectionParameter?,
             loadStoreParameter: KeyStore.LoadStoreParameter?
         ): List<Pair<String, String>> {
@@ -139,7 +153,7 @@ class EosioAndroidKeyStoreUtility {
         }
 
         /**
-         * Get all key (SECP256R1) in EOS format inside AndroidKeyStore
+         * Get all keys (SECP256R1) in EOS format inside AndroidKeyStore
          * @param alias String - the key's identity
          * @param password KeyStore.ProtectionParameter? - the password to load all the key
          * @param loadStoreParameter KeyStore.LoadStoreParameter? - the KeyStore Parameter to load the KeyStore instance
@@ -208,26 +222,29 @@ class EosioAndroidKeyStoreUtility {
          */
         @Throws(AndroidKeyStoreDeleteError::class)
         @JvmStatic
-        fun deleteKeyByAlias(keyAliasToDelete: String, loadStoreParameter: KeyStore.LoadStoreParameter?) {
+        fun deleteKeyByAlias(keyAliasToDelete: String, loadStoreParameter: KeyStore.LoadStoreParameter?): Boolean {
             try {
                 val ks: KeyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply {
                     load(loadStoreParameter)
                 }
 
                 ks.deleteEntry(keyAliasToDelete)
+
+                // If the key is still exist, return false. Otherwise, return true
+                return !ks.containsAlias(keyAliasToDelete)
             } catch (ex: Exception) {
                 throw AndroidKeyStoreDeleteError(DELETE_KEY_KEYSTORE_GENERIC_ERROR, ex)
             }
         }
 
         /**
-         * Delete all key in AndroidKeyStore
+         * Delete all keys in AndroidKeyStore
          *
          * @param loadStoreParameter KeyStore.LoadStoreParameter? - the KeyStore Parameter to load the KeyStore instance
          */
         @Throws(AndroidKeyStoreDeleteError::class)
         @JvmStatic
-        fun deleteAllKey(loadStoreParameter: KeyStore.LoadStoreParameter?) {
+        fun deleteAllKeys(loadStoreParameter: KeyStore.LoadStoreParameter?) {
             try {
                 val ks: KeyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply {
                     load(loadStoreParameter)
@@ -241,11 +258,11 @@ class EosioAndroidKeyStoreUtility {
 
         /**
          * Generate a default [KeyGenParameterSpec.Builder] with
-         * 
+         *
          * [KeyProperties.DIGEST_SHA256] as its digest
-         * 
+         *
          * [ECGenParameterSpec] as its algorithm parameter spec
-         * 
+         *
          * [SECP256R1_CURVE_NAME] as its EC curve
          *
          * @return KeyGenParameterSpec

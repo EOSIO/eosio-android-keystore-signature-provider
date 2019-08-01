@@ -56,7 +56,7 @@ class EosioAndroidKeyStoreSignatureProvider private constructor() : ISignaturePr
         }
 
         val aliasKeyPairs: List<Pair<String, String>> =
-            EosioAndroidKeyStoreUtility.getAllAndroidKeyStoreKeyInEOSFormat(
+            EosioAndroidKeyStoreUtility.getAllAndroidKeyStoreKeysInEOSFormat(
                 password = this.password,
                 loadStoreParameter = this.loadStoreParameter
             )
@@ -98,7 +98,7 @@ class EosioAndroidKeyStoreSignatureProvider private constructor() : ISignaturePr
     }
 
     override fun getAvailableKeys(): MutableList<String> {
-        return EosioAndroidKeyStoreUtility.getAllAndroidKeyStoreKeyInEOSFormat(
+        return EosioAndroidKeyStoreUtility.getAllAndroidKeyStoreKeysInEOSFormat(
             password = this.password,
             loadStoreParameter = this.loadStoreParameter
         )
