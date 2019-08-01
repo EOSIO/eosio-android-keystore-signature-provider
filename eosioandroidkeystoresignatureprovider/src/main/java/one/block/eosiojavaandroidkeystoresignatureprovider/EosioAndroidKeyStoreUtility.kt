@@ -25,7 +25,7 @@ import java.security.spec.X509EncodedKeySpec
 import java.util.*
 
 /**
- * Utility class provides cryptographic methods to manage keys in the AndroidKeyStore provider and use the keys to sign transactions.
+ * Utility class provides cryptographic methods to manage keys in the Android KeyStore Signature Provider and uses the keys to sign transactions.
  */
 class EosioAndroidKeyStoreUtility {
 
@@ -40,10 +40,11 @@ class EosioAndroidKeyStoreUtility {
         /**
          * Generate a new key inside AndroidKeyStore by the given [keyGenParameterSpec] and return the new key in EOS format
          * 
-         * The given [keyGenParameterSpec] is the parameter specification to generate new key, identity of the key could be set with it. This spec has to follow:
+         * The given [keyGenParameterSpec] is the parameter specification to generate a new key. This specification
+         * must include the following information if the key to be generated needs to be EOS mainnet compliant:
          * 
-         * - [KeyGenParameterSpec] must includes [KeyProperties.PURPOSE_SIGN]
-         * - [KeyGenParameterSpec.getAlgorithmParameterSpec] must be [ECGenParameterSpec]
+         * - [KeyGenParameterSpec] must include [KeyProperties.PURPOSE_SIGN]
+         * - [KeyGenParameterSpec.getAlgorithmParameterSpec] must be of type [ECGenParameterSpec]
          * - [KeyGenParameterSpec.getAlgorithmParameterSpec]'s curve name must be [SECP256R1_CURVE_NAME]
          */
         @JvmStatic
@@ -75,13 +76,13 @@ class EosioAndroidKeyStoreUtility {
         }
 
         /**
-         * Convert ECPublic Key (SECP256R1) that reside in AndroidKeyStore to EOS format
+         * Convert an ECPublic Key (SECP256R1) that resides in the AndroidKeyStore to EOS format
          * @param androidECPublicKey ECPublicKey - the ECPublic Key (SECP256R1) to convert
-         * @return String - EOS format of the input key
+         * @return String - EOS format of the provided key
          */
         @JvmStatic
-        fun convertAndroidKeyStorePublicKeyToEOSFormat(androidECPublicKey: ECPublicKey): String {
-            // Read the byte array content of the public without curve types
+        private fun convertAndroidKeyStorePublicKeyToEOSFormat(androidECPublicKey: ECPublicKey): String {
+            // Read the key information using the supported ASN.1 standard.
             val bIn: ASN1InputStream = ASN1InputStream(ByteArrayInputStream(androidECPublicKey.encoded))
             val asn1Sequence: ASN1Sequence = (bIn.readObject()).toASN1Primitive() as ASN1Sequence
 
@@ -106,14 +107,14 @@ class EosioAndroidKeyStoreUtility {
         }
 
         /**
-         * Get all key (SECP256R1) in EOS format inside AndroidKeyStore
-         * @param password KeyStore.ProtectionParameter? - the password to load all the key
+         * Get all (SECP256R1) curve keys in EOS format from Android KeyStore
+         * @param password KeyStore.ProtectionParameter? - the password to load all the keys
          * @param loadStoreParameter KeyStore.LoadStoreParameter? - the KeyStore Parameter to load the KeyStore instance
          *
-         * @return List<String> - List of SECP256R1 keys inside AndroidKeyStore
+         * @return List<String> - List of SECP256R1 keys inside AndroidKeyStore (EOS Format)
          */
         @JvmStatic
-        fun getAllAndroidKeyStoreKeyInEOSFormat(
+        fun getAllAndroidKeyStoreKeysInEOSFormat(
             password: KeyStore.ProtectionParameter?,
             loadStoreParameter: KeyStore.LoadStoreParameter?
         ): List<Pair<String, String>> {
@@ -139,11 +140,11 @@ class EosioAndroidKeyStoreUtility {
         }
 
         /**
-         * Get all key (SECP256R1) in EOS format inside AndroidKeyStore
+         * Get all (SECP256R1) keys in EOS format from Android KeyStore
          * @param alias String - the key's identity
-         * @param password KeyStore.ProtectionParameter? - the password to load all the key
+         * @param password KeyStore.ProtectionParameter? - the password to load all the keys
          * @param loadStoreParameter KeyStore.LoadStoreParameter? - the KeyStore Parameter to load the KeyStore instance
-         * @return String - the SECP256R1 key in AndroidKeyStore
+         * @return String - the SECP256R1 key in the Android KeyStore
          */
         @Throws(QueryAndroidKeyStoreError::class)
         @JvmStatic
@@ -166,7 +167,7 @@ class EosioAndroidKeyStoreUtility {
         }
 
         /**
-         * Sign data with a key in the keystore.
+         * Sign data with a key in the KeyStore.
          *
          * @param data ByteArray - data to be signed
          * @param alias String - identity of the key to be used for signing
@@ -200,7 +201,7 @@ class EosioAndroidKeyStoreUtility {
         }
 
         /**
-         * Delete a key inside AndroidKeyStore by its alias
+         * Delete a key inside Android KeyStore by its alias
          *
          * @param keyAliasToDelete String - the alias of the key to delete
          * @param loadStoreParameter KeyStore.LoadStoreParameter? - the KeyStore Parameter to load the KeyStore instance
@@ -221,13 +222,13 @@ class EosioAndroidKeyStoreUtility {
         }
 
         /**
-         * Delete all key in AndroidKeyStore
+         * Delete all keys in the Android KeyStore
          *
          * @param loadStoreParameter KeyStore.LoadStoreParameter? - the KeyStore Parameter to load the KeyStore instance
          */
         @Throws(AndroidKeyStoreDeleteError::class)
         @JvmStatic
-        fun deleteAllKey(loadStoreParameter: KeyStore.LoadStoreParameter?) {
+        fun deleteAllKeys(loadStoreParameter: KeyStore.LoadStoreParameter?) {
             try {
                 val ks: KeyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply {
                     load(loadStoreParameter)

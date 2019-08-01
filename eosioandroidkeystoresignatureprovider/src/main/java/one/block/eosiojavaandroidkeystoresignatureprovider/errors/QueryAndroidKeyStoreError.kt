@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull
 import java.lang.Exception
 
 /**
- * Error class that will be thrown from [one.block.eosiojavaandroidkeystoresignatureprovider.EosioAndroidKeyStoreUtility.getAllAndroidKeyStoreKeyInEOSFormat]
+ * Error class that will be thrown from [one.block.eosiojavaandroidkeystoresignatureprovider.EosioAndroidKeyStoreUtility.getAllAndroidKeyStoreKeysInEOSFormat]
  */
 class QueryAndroidKeyStoreError : GetAvailableKeysError {
     constructor() : super()

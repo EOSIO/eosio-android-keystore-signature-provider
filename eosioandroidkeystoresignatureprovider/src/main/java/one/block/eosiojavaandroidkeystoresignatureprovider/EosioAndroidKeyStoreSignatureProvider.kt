@@ -14,14 +14,14 @@ import org.bouncycastle.util.encoders.Hex
 import java.security.KeyStore
 
 /**
- * EOSIO signature provider for AndroidKeyStore
+ * EOSIO signature provider for Android KeyStore
  * 
- * This provider works only with SECP256R1 curve
+ * This provider only works with the SECP256R1 curve.
  * 
- * Key get generated/imported in AndroidKeyStore wil be protected. Its private key will never been exposed to any processes outside of the KeyStore
+ * When a key gets generated in the Android KeyStore, or imported into it, the key is protected and cannot be read.
  *
- * @property password ProtectionParameter? - the password protection entity for adding, using and removing key. Its default value is NULL. It is a private field and could be set by [EosioAndroidKeyStoreSignatureProvider.Builder.setPassword] only
- * @property loadStoreParameter LoadStoreParameter? - the load KeyStore Parameter to load the KeyStore instance. Its default value is NULL. It is a private field and could be set by [EosioAndroidKeyStoreSignatureProvider.Builder.setLoadStoreParameter] only
+ * @property password ProtectionParameter? - the password protection entity for adding, using and removing keys. Its default value is NULL. It is a private field and can only be set by calling [EosioAndroidKeyStoreSignatureProvider.Builder.setPassword]
+ * @property loadStoreParameter LoadStoreParameter? - the load KeyStore Parameter to load the KeyStore instance. Its default value is NULL. It is a private field and can only be set by calling [EosioAndroidKeyStoreSignatureProvider.Builder.setLoadStoreParameter]
  */
 class EosioAndroidKeyStoreSignatureProvider private constructor() : ISignatureProvider {
     private var password: KeyStore.ProtectionParameter? = null
@@ -56,7 +56,7 @@ class EosioAndroidKeyStoreSignatureProvider private constructor() : ISignaturePr
         }
 
         val aliasKeyPairs: List<Pair<String, String>> =
-            EosioAndroidKeyStoreUtility.getAllAndroidKeyStoreKeyInEOSFormat(
+            EosioAndroidKeyStoreUtility.getAllAndroidKeyStoreKeysInEOSFormat(
                 password = this.password,
                 loadStoreParameter = this.loadStoreParameter
             )
@@ -98,7 +98,7 @@ class EosioAndroidKeyStoreSignatureProvider private constructor() : ISignaturePr
     }
 
     override fun getAvailableKeys(): MutableList<String> {
-        return EosioAndroidKeyStoreUtility.getAllAndroidKeyStoreKeyInEOSFormat(
+        return EosioAndroidKeyStoreUtility.getAllAndroidKeyStoreKeysInEOSFormat(
             password = this.password,
             loadStoreParameter = this.loadStoreParameter
         )
@@ -106,7 +106,7 @@ class EosioAndroidKeyStoreSignatureProvider private constructor() : ISignaturePr
     }
 
     /**
-     * Builder class of AndroidKeyStore signature provider
+     * Builder class for Android KeyStore Signature Provider
      *
      * @property androidKeyStoreSignatureProvider AndroidKeyStoreSignatureProvider
      */
@@ -138,7 +138,7 @@ class EosioAndroidKeyStoreSignatureProvider private constructor() : ISignaturePr
         }
 
         /**
-         * Build and return the provider instance
+         * Build and return the Android KeyStore Signature Provider instance
          *
          * @return AndroidKeyStoreSignatureProvider
          */

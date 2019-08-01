@@ -77,7 +77,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
      */
     @Test
     fun getAvailableKeyWithNoKey_expectEmpty() {
-        EosioAndroidKeyStoreUtility.deleteAllKey(null)
+        EosioAndroidKeyStoreUtility.deleteAllKeys(null)
 
         val keyStoreProvider: EosioAndroidKeyStoreSignatureProvider =
             EosioAndroidKeyStoreSignatureProvider.Builder().build()
@@ -99,7 +99,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
     @Test
     fun getAvailableKeyWithMultipleKeyAdded_expectMultipleKey() {
         // Clear all keys to make sure we get the exact amount
-        EosioAndroidKeyStoreUtility.deleteAllKey(null)
+        EosioAndroidKeyStoreUtility.deleteAllKeys(null)
 
         // Generate keys
         for (i in 0 until TEST_CONST_GET_AVAILABLE_KEY_MULTIPLE_KEY_AMOUNT) {
@@ -119,7 +119,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
         }
 
         // Clear keys
-        EosioAndroidKeyStoreUtility.deleteAllKey(loadStoreParameter = null)
+        EosioAndroidKeyStoreUtility.deleteAllKeys(loadStoreParameter = null)
     }
 
     /**
@@ -135,7 +135,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
     @Test
     fun getAvailableKeyWithStressOutMaxMultipleKeyAdded_expectMultipleKeyStressOutMax() {
         // Clear all keys to make sure we get the exact amount
-        EosioAndroidKeyStoreUtility.deleteAllKey(null)
+        EosioAndroidKeyStoreUtility.deleteAllKeys(null)
 
         // Generate keys
         for (i in 0 until TEST_CONST_GET_AVAILABLE_KEY_MULTIPLE_KEY_AMOUNT_MAX_TO_STRESS) {
@@ -155,7 +155,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
         }
 
         // Clear keys
-        EosioAndroidKeyStoreUtility.deleteAllKey(null)
+        EosioAndroidKeyStoreUtility.deleteAllKeys(null)
     }
 
     /**
@@ -205,7 +205,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
         Assert.assertNotEquals("", transactionSignatureResponse.signatures[0])
         Assert.assertTrue(transactionSignatureResponse.signatures[0].contains("SIG_R1_", true))
 
-        EosioAndroidKeyStoreUtility.deleteAllKey(loadStoreParameter = null)
+        EosioAndroidKeyStoreUtility.deleteAllKeys(loadStoreParameter = null)
 
     }
 
@@ -224,7 +224,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
      */
     @Test
     fun signTransactionWithMultipleKey_expectMultipleSignature() {
-        EosioAndroidKeyStoreUtility.deleteAllKey(loadStoreParameter = null)
+        EosioAndroidKeyStoreUtility.deleteAllKeys(loadStoreParameter = null)
 
         val signingPublicKeys: MutableList<String> = ArrayList()
 
@@ -267,7 +267,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
         }
 
 
-        EosioAndroidKeyStoreUtility.deleteAllKey(loadStoreParameter = null)
+        EosioAndroidKeyStoreUtility.deleteAllKeys(loadStoreParameter = null)
     }
 
     /**
@@ -283,7 +283,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
         exceptionRule.expect(SignTransactionError::class.java)
         exceptionRule.expectMessage(String.format(SIGN_TRANSACTION_PREPARE_FOR_SIGNING_GENERIC_ERROR, ""))
 
-        EosioAndroidKeyStoreUtility.deleteAllKey(loadStoreParameter = null)
+        EosioAndroidKeyStoreUtility.deleteAllKeys(loadStoreParameter = null)
         val signingPublicKeys: MutableList<String> = ArrayList()
 
         // Get just added key to the signing key to request the KeyStore to sign
@@ -329,7 +329,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
         exceptionRule.expect(QueryAndroidKeyStoreError::class.java)
         exceptionRule.expectMessage(QUERY_ANDROID_KEYSTORE_GENERIC_ERROR)
 
-        EosioAndroidKeyStoreUtility.deleteAllKey(loadStoreParameter = null)
+        EosioAndroidKeyStoreUtility.deleteAllKeys(loadStoreParameter = null)
         val signingPublicKeys: MutableList<String> = ArrayList()
 
         signingPublicKeys.add(
