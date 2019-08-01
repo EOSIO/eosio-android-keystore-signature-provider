@@ -1,4 +1,4 @@
-# Contributing to EOSIO SDK for Java: Softkey Signature Provider
+# Contributing to EOSIO SDK for Java: Android KeyStore Signature Provider
 
 Interested in contributing? That's awesome! Here are some guidelines to get started quickly and easily:
 
@@ -6,7 +6,7 @@ Interested in contributing? That's awesome! Here are some guidelines to get star
   - [Bug Reports](#bug-reports)
   - [Feature Requests](#feature-requests)
   - [Change Requests](#change-requests)
-- [Working on Softkey Signature Provider](#working-on-softkey-signature-provider)
+- [Working on Android KeyStore Signature Provider](#working-on-android-keystore-signature-provider)
   - [Feature Branches](#feature-branches)
   - [Developing With Gradle Locally](#developing-with-gradle-locally)
   - [Submitting Pull Requests](#submitting-pull-requests)
@@ -18,7 +18,7 @@ Interested in contributing? That's awesome! Here are some guidelines to get star
 
 ## Reporting An Issue
 
-If you're about to raise an issue because you think you've found a problem with Softkey Signature Provider, or you'd like to make a request for a new feature in the codebase, or any other reason… please read this first.
+If you're about to raise an issue because you think you've found a problem with Android KeyStore Signature Provider, or you'd like to make a request for a new feature in the codebase, or any other reason… please read this first.
 
 The GitHub issue tracker is the preferred channel for [bug reports](#bug-reports), [feature requests](#feature-requests), and [submitting pull requests](#submitting-pull-requests), but please respect the following restrictions:
 
@@ -59,7 +59,7 @@ Change requests cover both architectural and functional changes to how Softkey S
 1. Take a moment to think about the best way to make a case for, and explain what you're thinking. Are you sure this shouldn't really be
    a [bug report](#bug-reports) or a [feature request](#feature-requests)?  Is it really one idea or is it many? What's the context? What problem are you solving? Why is what you are suggesting better than what's already there?
 
-## Working on Softkey Signature Provider
+## Working on Android KeyStore Signature Provider
 
 Code contributions are welcome and encouraged! If you are looking for a good place to start, check out the [good first issue](/../../labels/good%20first%20issue) label in GitHub issues.
 
@@ -70,7 +70,7 @@ Also, please follow these guidelines when submitting code:
 To get it out of the way:
 
 - **[develop](/../../tree/develop)** is the development branch. All work on the next release happens here so you should generally branch off `develop`. Do **NOT** use this branch for a production site.
-- **[master](/../../tree/master)** contains the latest release of Softkey Signature Provider. This branch may be used in production. Do **NOT** use this branch to work on Softkey Signature Provider's source.
+- **[master](/../../tree/master)** contains the latest release of Android KeyStore Signature Provider. This branch may be used in production. Do **NOT** use this branch to work on Android KeyStore Signature Provider's source.
 
 ### Developing With Gradle Locally
 
@@ -82,6 +82,7 @@ By default, libraries are installed from remote Maven repositories through Gradl
    * [RPC Provider](https://github.com/EOSIO/eosio-java-android-rpc-provider): The RPC provider implementation in the core library
    * [ABIEOS Serialization Provider](https://github.com/EOSIO/eosio-java-android-abieos-serialization-provider): A pluggable serialization provider for EOSIO SDK for Java using ABIEOS (for transaction and action conversion between JSON and binary data representations)
    * [Softkey Signature Provider](https://github.com/EOSIO/eosio-java-softkey-signature-provider): An example pluggable signature provider for EOSIO SDK for Java for signing transactions using in-memory keys (not for production use)
+   * [Android KeyStore Signature Provider](https://github.com/EOSIO/eosio-android-keystore-signature-provider): An example pluggable signature provider for EOSIO SDK for Java for signing transactions using Android KeyStore keys (recommended over the Softkey Signature Provider for Android implementations)
 1. Import as a gradle project into your favorite IDE or build with gradle from the command line.
 1. Develop!
 
@@ -93,11 +94,11 @@ Pull requests are awesome. If you're looking to raise a PR for something which d
 
 Never underestimate just how useful quality assurance is. If you're looking to get involved with the code base and don't know where to start, checking out and testing a pull request is one of the most useful things you could do.
 
-Essentially, [check out the latest develop branch](#working-on-softkey-signature-provider), take it for a spin, and if you find anything odd, please follow the [bug report guidelines](#bug-reports) and let us know!
+Essentially, [check out the latest develop branch](#working-on-android-keystore-signature-provider), take it for a spin, and if you find anything odd, please follow the [bug report guidelines](#bug-reports) and let us know!
 
 ### Code Style and Linting
 
-Softkey Signature Provider leverages [SonarLint](https://www.sonarlint.org/) for linting and the [Google Java Style Guide](https://github.com/google/styleguide) with tab size and indent set to 4, and continuation indent set to 8 for code format flagging. Once SonarLint is installed, linting warnings and errors will be flagged inline with squiggles. Automatic code formatting can be accomplished by downloading and importing the Google Java Style settings into your IDE.
+Android KeyStore Signature Provider leverages [SonarLint](https://www.sonarlint.org/) for linting and the [Google Kotlin Style Guide](https://developer.android.com/kotlin/style-guide) with tab size and indent set to 4, and continuation indent set to 8 for code format flagging. Once SonarLint is installed, linting warnings and errors will be flagged inline with squiggles. Automatic code formatting can be accomplished by downloading and importing the Google Style settings into your IDE.
 
 Please be sure to resolve any linting issues introduced by your contributions prior to requesting a review on your PR.
 
