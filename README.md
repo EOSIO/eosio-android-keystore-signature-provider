@@ -112,28 +112,28 @@ This library is an example implementation of [ISignatureProvider](https://github
 * `signTransaction(EosioTransactionSignatureRequest eosioTransactionSignatureRequest)` signs a `Transaction`
 * `getAvailableKeys()` returns an array containing the public keys associated with the private keys that the object is initialized with
 
-The library also includes a utility class that allows the user to manage keys in the Android Keystore (e.g. query, add, or delete).  Keys management includes the ability to ad password protection and use user defined aliases to label and query the keys.  The keys that are queried are automatically converted to the EOS format so that they are automatically compatible with EOS mainnet applications.  The class is called EosioAndroidKeyStoreUtility and can be referenced as follows:
+The library also includes a utility class that allows the user to manage keys in the Android Keystore (e.g. query, add, or delete).  Key management includes the ability to ad password protection and use user defined aliases to label and query the keys.  The keys that are queried are automatically converted to the EOS format so that they are automatically compatible with EOS mainnet applications.  The class is called EosioAndroidKeyStoreUtility and can be referenced as follows:
 
 Generate a key by calling:
 
-* `generateAndroidKeyStoreKey(alias:String)`
+* `EosioAndroidKeyStoreUtility.generateAndroidKeyStoreKey(alias:String)`
 
 Query all keys in KeyStore by calling:
 
-* `getAllAndroidKeyStoreKeyInEOSIOFormat(
+* `EosioAndroidKeyStoreUtility.getAllAndroidKeyStoreKeyInEOSIOFormat(
             password: KeyStore.ProtectionParameter?,
             loadStoreParameter: KeyStore.LoadStoreParameter?)`
         
 Query a specific key in the KeyStore by calling:
 
-* `getAndroidKeyStoreKeyInEOSIOFormat(
+* `EosioAndroidKeyStoreUtility.getAndroidKeyStoreKeyInEOSIOFormat(
             alias: String,
             password: KeyStore.ProtectionParameter?,
             loadStoreParameter: KeyStore.LoadStoreParameter?)`
             
 Sign any data with a specific key in the KeyStore by calling:
 
-* `sign(
+* `EosioAndroidKeyStoreUtility.sign(
             data: ByteArray,
             alias: String,
             password: KeyStore.ProtectionParameter?,
@@ -141,13 +141,13 @@ Sign any data with a specific key in the KeyStore by calling:
             
 Delete a key in the KeyStore by its alias by calling:
 
-* `deleteKeyByAlias(
+* `EosioAndroidKeyStoreUtility.deleteKeyByAlias(
             keyAliasToDelete: String,
             loadStoreParameter: KeyStore.LoadStoreParameter?)`
             
 Delete all keys in the KeyStore by calling:
 
-* `deleteAllKey(loadStoreParameter: KeyStore.LoadStoreParameter?)`
+* `EosioAndroidKeyStoreUtility.deleteAllKey(loadStoreParameter: KeyStore.LoadStoreParameter?)`
 
 ## Want to help?
 
