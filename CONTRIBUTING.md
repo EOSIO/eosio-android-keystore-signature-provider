@@ -53,7 +53,7 @@ Feature requests are welcome. Before you submit one be sure to have:
 
 ### Change Requests
 
-Change requests cover both architectural and functional changes to how Softkey Signature Provider works. If you have an idea for a new or different dependency, a refactor, or an improvement to a feature, etc - please be sure to:
+Change requests cover both architectural and functional changes to how Android KeyStore Signature Provider works. If you have an idea for a new or different dependency, a refactor, or an improvement to a feature, etc - please be sure to:
 
 1. **Use the GitHub search** and check someone else didn't get there first
 1. Take a moment to think about the best way to make a case for, and explain what you're thinking. Are you sure this shouldn't really be
@@ -81,8 +81,7 @@ By default, libraries are installed from remote Maven repositories through Gradl
    * [EOSIO SDK for Java](https://github.com/EOSIO/eosio-java): The core EOSIO SDK for Java library
    * [RPC Provider](https://github.com/EOSIO/eosio-java-android-rpc-provider): The RPC provider implementation in the core library
    * [ABIEOS Serialization Provider](https://github.com/EOSIO/eosio-java-android-abieos-serialization-provider): A pluggable serialization provider for EOSIO SDK for Java using ABIEOS (for transaction and action conversion between JSON and binary data representations)
-   * [Softkey Signature Provider](https://github.com/EOSIO/eosio-java-softkey-signature-provider): An example pluggable signature provider for EOSIO SDK for Java for signing transactions using in-memory keys (not for production use)
-   * [Android KeyStore Signature Provider](https://github.com/EOSIO/eosio-android-keystore-signature-provider): An example pluggable signature provider for EOSIO SDK for Java for signing transactions using Android KeyStore keys (recommended over the Softkey Signature Provider for Android implementations)
+   * [Android KeyStore Signature Provider](https://github.com/EOSIO/eosio-android-keystore-signature-provider): An example pluggable signature provider for EOSIO SDK for Java for signing transactions using Android KeyStore keys 
 1. Import as a gradle project into your favorite IDE or build with gradle from the command line.
 1. Develop!
 
