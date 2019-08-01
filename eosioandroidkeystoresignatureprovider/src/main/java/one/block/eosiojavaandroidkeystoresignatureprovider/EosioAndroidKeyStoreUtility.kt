@@ -2,51 +2,67 @@ package one.block.eosiojavaandroidkeystoresignatureprovider
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
-import one.block.eosiojava.enums.AlgorithmEmployed
 import one.block.eosiojava.utilities.EOSFormatter
-import one.block.eosiojavaandroidkeystoresignatureprovider.errors.AndroidKeyStoreDeleteError
-import one.block.eosiojavaandroidkeystoresignatureprovider.errors.AndroidKeyStoreSigningError
-import one.block.eosiojavaandroidkeystoresignatureprovider.errors.ErrorString.Companion.CONVERT_EC_TO_EOS_INVALID_DER_SIZE
-import one.block.eosiojavaandroidkeystoresignatureprovider.errors.ErrorString.Companion.CONVERT_EC_TO_EOS_INVALID_FIRST_3_BYTES
+import one.block.eosiojavaandroidkeystoresignatureprovider.errors.*
 import one.block.eosiojavaandroidkeystoresignatureprovider.errors.ErrorString.Companion.CONVERT_EC_TO_EOS_INVALID_INPUT_KEY
 import one.block.eosiojavaandroidkeystoresignatureprovider.errors.ErrorString.Companion.DELETE_KEY_KEYSTORE_GENERIC_ERROR
+import one.block.eosiojavaandroidkeystoresignatureprovider.errors.ErrorString.Companion.GENERATE_KEY_ECGEN_MUST_USE_SECP256R1
+import one.block.eosiojavaandroidkeystoresignatureprovider.errors.ErrorString.Companion.GENERATE_KEY_KEYGENSPEC_MUST_USE_EC
+import one.block.eosiojavaandroidkeystoresignatureprovider.errors.ErrorString.Companion.GENERATE_KEY_MUST_HAS_PURPOSE_SIGN
 import one.block.eosiojavaandroidkeystoresignatureprovider.errors.ErrorString.Companion.QUERY_ANDROID_KEYSTORE_GENERIC_ERROR
-import one.block.eosiojavaandroidkeystoresignatureprovider.errors.PublicKeyConversionError
-import one.block.eosiojavaandroidkeystoresignatureprovider.errors.QueryAndroidKeyStoreError
 import org.bouncycastle.asn1.ASN1Encodable
 import org.bouncycastle.asn1.ASN1InputStream
 import org.bouncycastle.asn1.ASN1Sequence
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers
-import org.bouncycastle.util.encoders.Hex
+import org.bouncycastle.util.io.pem.PemObject
+import org.bouncycastle.util.io.pem.PemWriter
 import java.io.ByteArrayInputStream
+import java.io.StringWriter
 import java.security.*
 import java.security.interfaces.ECPublicKey
+import java.security.spec.ECGenParameterSpec
 import java.security.spec.X509EncodedKeySpec
 import java.util.*
 
 /**
- * Utility class provides cryptographic methods to generate, sign digital signature and query all key in AndroidKeyStore provider for EOSIO
+ * Utility class provides cryptographic methods to manage keys in the AndroidKeyStore provider and use the keys to sign transactions.
  */
 class EosioAndroidKeyStoreUtility {
 
     companion object {
         private const val ANDROID_PUBLIC_KEY_OID_ID: Int = 0
-        private const val ANDROID_PUBLIC_KEY_DER: Int = 1
         private const val EC_PUBLICKEY_OID_INDEX: Int = 0
         private const val SECP256R1_OID_INDEX: Int = 1
-        private const val ANDROID_PUBLIC_KEY_DER_SIZE: Int = 68
         private const val ANDROID_KEYSTORE: String = "AndroidKeyStore"
         private const val ANDROID_ECDSA_SIGNATURE_ALGORITHM: String = "SHA256withECDSA"
-        private const val ANDROID_KEYSTORE_PUBLIC_KEY_FIRST_3_BYTES: String = "034200"
+        private const val SECP256R1_CURVE_NAME = "secp256r1"
 
         /**
-         * Generate a new key inside AndroidKeyStore
-         *
-         * @param keyGenParameterSpec KeyGenParameterSpec - Parameter specification to generate new key, identity of the key could be set with it
-         * @return Public key in EOS format
+         * Generate a new key inside AndroidKeyStore by the given [keyGenParameterSpec] and return the new key in EOS format
+         * 
+         * The given [keyGenParameterSpec] is the parameter specification to generate new key, identity of the key could be set with it. This spec has to follow:
+         * 
+         * - [KeyGenParameterSpec] must includes [KeyProperties.PURPOSE_SIGN]
+         * - [KeyGenParameterSpec.getAlgorithmParameterSpec] must be [ECGenParameterSpec]
+         * - [KeyGenParameterSpec.getAlgorithmParameterSpec]'s curve name must be [SECP256R1_CURVE_NAME]
          */
         @JvmStatic
         fun generateAndroidKeyStoreKey(keyGenParameterSpec: KeyGenParameterSpec): String {
+            // Parameter Spec must includes PURPOSE_SIGN
+            if (KeyProperties.PURPOSE_SIGN and keyGenParameterSpec.purposes != KeyProperties.PURPOSE_SIGN) {
+                throw InvalidKeyGenParameter(GENERATE_KEY_MUST_HAS_PURPOSE_SIGN)
+            }
+
+            // Parameter Spec's algorithm spec must be ECGenParameterSpec
+            if (keyGenParameterSpec.algorithmParameterSpec !is ECGenParameterSpec) {
+                throw InvalidKeyGenParameter(GENERATE_KEY_KEYGENSPEC_MUST_USE_EC)
+            }
+
+            // The curve of Parameter Spec's algorithm must be SECP256R1
+            if ((keyGenParameterSpec.algorithmParameterSpec as ECGenParameterSpec).name != SECP256R1_CURVE_NAME) {
+                throw InvalidKeyGenParameter(GENERATE_KEY_ECGEN_MUST_USE_SECP256R1)
+            }
+
             val kpg: KeyPairGenerator =
                 KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, ANDROID_KEYSTORE)
 
@@ -59,65 +75,34 @@ class EosioAndroidKeyStoreUtility {
         }
 
         /**
-         * Convert ECPublic Key (SECP256R1) that reside in AndroidKeyStore to EOSIO format
+         * Convert ECPublic Key (SECP256R1) that reside in AndroidKeyStore to EOS format
          * @param androidECPublicKey ECPublicKey - the ECPublic Key (SECP256R1) to convert
-         * @return String - EOSIO format of the input key
+         * @return String - EOS format of the input key
          */
         @JvmStatic
         fun convertAndroidKeyStorePublicKeyToEOSFormat(androidECPublicKey: ECPublicKey): String {
             // Read the byte array content of the public without curve types
             val bIn: ASN1InputStream = ASN1InputStream(ByteArrayInputStream(androidECPublicKey.encoded))
-            val obj: ASN1Sequence = (bIn.readObject()).toASN1Primitive() as ASN1Sequence
+            val asn1Sequence: ASN1Sequence = (bIn.readObject()).toASN1Primitive() as ASN1Sequence
 
             // Verify if the key is ECPublicKey and SECP256R1
             val publicKeyOID: Array<ASN1Encodable> =
-                (obj.getObjectAt(ANDROID_PUBLIC_KEY_OID_ID) as ASN1Sequence).toArray()
+                (asn1Sequence.getObjectAt(ANDROID_PUBLIC_KEY_OID_ID) as ASN1Sequence).toArray()
             if (X9ObjectIdentifiers.id_ecPublicKey.id != publicKeyOID[EC_PUBLICKEY_OID_INDEX].toString()
                 || X9ObjectIdentifiers.prime256v1.id != publicKeyOID[SECP256R1_OID_INDEX].toString()
             ) {
                 throw PublicKeyConversionError(CONVERT_EC_TO_EOS_INVALID_INPUT_KEY)
             }
 
-            val publicKeyDERContent: ASN1Encodable = obj.getObjectAt(ANDROID_PUBLIC_KEY_DER)
+            val stringWriter: StringWriter = StringWriter()
+            val pemWriter: PemWriter = PemWriter(stringWriter)
+            val pemObject: PemObject = PemObject("PUBLIC KEY", asn1Sequence.encoded)
+            pemWriter.writeObject(pemObject)
+            pemWriter.flush()
 
-            // Check if the point is compressed
-            var qPoint: ByteArray = publicKeyDERContent.toASN1Primitive().encoded
+            val pemFormattedPublicKey: String = stringWriter.toString()
 
-            if (qPoint.size != ANDROID_PUBLIC_KEY_DER_SIZE) {
-                // Invalid or Unknown, the size the public key has to be 3 ("034200") + 1 ("04") + 32 (X array) + 32 (Y array)
-                throw PublicKeyConversionError(
-                    String.format(
-                        CONVERT_EC_TO_EOS_INVALID_DER_SIZE,
-                        ANDROID_KEYSTORE_PUBLIC_KEY_FIRST_3_BYTES
-                    )
-                )
-            }
-
-            // Check first 3 bytes
-            val first3BytesOfPointEncoding: ByteArray = qPoint.sliceArray(IntRange(0, 2))
-
-            if (Hex.toHexString(first3BytesOfPointEncoding) != ANDROID_KEYSTORE_PUBLIC_KEY_FIRST_3_BYTES) {
-                // Invalid or Unknown
-                throw PublicKeyConversionError(
-                    String.format(
-                        CONVERT_EC_TO_EOS_INVALID_FIRST_3_BYTES,
-                        ANDROID_KEYSTORE_PUBLIC_KEY_FIRST_3_BYTES
-                    )
-                )
-            }
-
-            // Remove the first 3 bytes
-            qPoint = qPoint.slice(IntRange(3, qPoint.size - 1)).toByteArray()
-
-            // The pointEncoding structure is "04" + 32 (X array) + 32 (Y array)
-            qPoint = EOSFormatter.compressPublickey(qPoint, AlgorithmEmployed.SECP256R1)
-
-            // Finally, encode the compressed Q point to EOSIO format public key
-            return EOSFormatter.encodePublicKey(
-                qPoint,
-                AlgorithmEmployed.SECP256R1,
-                false
-            )
+            return EOSFormatter.convertPEMFormattedPublicKeyToEOSFormat(pemFormattedPublicKey, false)
         }
 
         /**
@@ -128,7 +113,7 @@ class EosioAndroidKeyStoreUtility {
          * @return List<String> - List of SECP256R1 keys inside AndroidKeyStore
          */
         @JvmStatic
-        fun getAllAndroidKeyStoreKeyInEOSIOFormat(
+        fun getAllAndroidKeyStoreKeyInEOSFormat(
             password: KeyStore.ProtectionParameter?,
             loadStoreParameter: KeyStore.LoadStoreParameter?
         ): List<Pair<String, String>> {
@@ -162,7 +147,7 @@ class EosioAndroidKeyStoreUtility {
          */
         @Throws(QueryAndroidKeyStoreError::class)
         @JvmStatic
-        fun getAndroidKeyStoreKeyInEOSIOFormat(
+        fun getAndroidKeyStoreKeyInEOSFormat(
             alias: String,
             password: KeyStore.ProtectionParameter?,
             loadStoreParameter: KeyStore.LoadStoreParameter?
@@ -181,7 +166,7 @@ class EosioAndroidKeyStoreUtility {
         }
 
         /**
-         * Sign a digital signature into a binary data
+         * Sign data with a key in the keystore.
          *
          * @param data ByteArray - data to be signed
          * @param alias String - identity of the key to be used for signing
@@ -240,6 +225,7 @@ class EosioAndroidKeyStoreUtility {
          *
          * @param loadStoreParameter KeyStore.LoadStoreParameter? - the KeyStore Parameter to load the KeyStore instance
          */
+        @Throws(AndroidKeyStoreDeleteError::class)
         @JvmStatic
         fun deleteAllKey(loadStoreParameter: KeyStore.LoadStoreParameter?) {
             try {
@@ -251,6 +237,27 @@ class EosioAndroidKeyStoreUtility {
             } catch (ex: Exception) {
                 throw AndroidKeyStoreDeleteError(DELETE_KEY_KEYSTORE_GENERIC_ERROR, ex)
             }
+        }
+
+        /**
+         * Generate a default [KeyGenParameterSpec.Builder] with
+         * 
+         * [KeyProperties.DIGEST_SHA256] as its digest
+         * 
+         * [ECGenParameterSpec] as its algorithm parameter spec
+         * 
+         * [SECP256R1_CURVE_NAME] as its EC curve
+         *
+         * @return KeyGenParameterSpec
+         */
+        @JvmStatic
+        fun generateDefaultKeyGenParameterSpecBuilder(alias: String): KeyGenParameterSpec.Builder {
+            return KeyGenParameterSpec.Builder(
+                alias,
+                KeyProperties.PURPOSE_SIGN
+            )
+                .setDigests(KeyProperties.DIGEST_SHA256)
+                .setAlgorithmParameterSpec(ECGenParameterSpec(SECP256R1_CURVE_NAME))
         }
     }
 }

@@ -15,13 +15,13 @@ import java.security.KeyStore
 
 /**
  * EOSIO signature provider for AndroidKeyStore
- * <p/>
+ * 
  * This provider works only with SECP256R1 curve
- * <p/>
+ * 
  * Key get generated/imported in AndroidKeyStore wil be protected. Its private key will never been exposed to any processes outside of the KeyStore
  *
- * @property password ProtectionParameter?
- * @property loadStoreParameter LoadStoreParameter?
+ * @property password ProtectionParameter? - the password protection entity for adding, using and removing key. Its default value is NULL. It is a private field and could be set by [EosioAndroidKeyStoreSignatureProvider.Builder.setPassword] only
+ * @property loadStoreParameter LoadStoreParameter? - the load KeyStore Parameter to load the KeyStore instance. Its default value is NULL. It is a private field and could be set by [EosioAndroidKeyStoreSignatureProvider.Builder.setLoadStoreParameter] only
  */
 class EosioAndroidKeyStoreSignatureProvider private constructor() : ISignatureProvider {
     private var password: KeyStore.ProtectionParameter? = null
@@ -32,7 +32,7 @@ class EosioAndroidKeyStoreSignatureProvider private constructor() : ISignaturePr
             throw SignTransactionError(ErrorString.SIGN_TRANS_EMPTY_CHAIN_ID)
         }
 
-        // Preparing message's items for sigining
+        // Prepare message to be signed.
         // Getting serializedTransaction and preparing signable transaction
         val serializedTransaction: String = eosioTransactionSignatureRequest.serializedTransaction
 
@@ -56,7 +56,7 @@ class EosioAndroidKeyStoreSignatureProvider private constructor() : ISignaturePr
         }
 
         val aliasKeyPairs: List<Pair<String, String>> =
-            EosioAndroidKeyStoreUtility.getAllAndroidKeyStoreKeyInEOSIOFormat(
+            EosioAndroidKeyStoreUtility.getAllAndroidKeyStoreKeyInEOSFormat(
                 password = this.password,
                 loadStoreParameter = this.loadStoreParameter
             )
@@ -98,7 +98,7 @@ class EosioAndroidKeyStoreSignatureProvider private constructor() : ISignaturePr
     }
 
     override fun getAvailableKeys(): MutableList<String> {
-        return EosioAndroidKeyStoreUtility.getAllAndroidKeyStoreKeyInEOSIOFormat(
+        return EosioAndroidKeyStoreUtility.getAllAndroidKeyStoreKeyInEOSFormat(
             password = this.password,
             loadStoreParameter = this.loadStoreParameter
         )

@@ -8,6 +8,8 @@ apply plugin: 'com.jfrog.artifactory'
 
 apply plugin: 'maven-publish'
 
+apply plugin: 'org.jetbrains.dokka-android'
+
 android {
     compileSdkVersion 29
     defaultConfig {
@@ -30,6 +32,10 @@ android {
         exclude 'lib/x86_64/freebsd/libscrypt.so'
         exclude 'lib/x86_64/linux/libscrypt.so'
     }
+
+    lintOptions {
+        disable 'InvalidPackage'
+    }
 }
 
 dependencies {
@@ -37,7 +43,7 @@ dependencies {
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.0.2'
 
-    implementation 'one.block:eosiojava:0.1.0'
+    implementation 'one.block:eosiojava:0.1.0-feature-androidkeystore'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
@@ -53,6 +59,17 @@ task androidSourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
 }
 
+task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaAndroidTask){
+    outputFormat = 'javadoc'
+    outputDirectory = "$buildDir/javadoc"
+    includes = ['package-info.md']
+}
+
+task androidDokkaDocsJar(type: Jar, dependsOn: dokkaJavadoc){
+    classifier = 'javadoc'
+    from "$buildDir/javadoc"
+}
+
 project.afterEvaluate {
     publishing {
         publications {
@@ -64,6 +81,9 @@ project.afterEvaluate {
                 artifact bundleReleaseAar
 
                 artifact androidSourcesJar
+
+                artifact androidDokkaDocsJar
+
                 pom.withXml {
                     final dependenciesNode = asNode().appendNode('dependencies')
 
