@@ -268,7 +268,7 @@ class EosioAndroidKeyStoreUtility {
          * @return KeyGenParameterSpec
          */
         @JvmStatic
-        fun generateDefaultKeyGenParameterSpecBuilder(alias: String): KeyGenParameterSpec.Builder {
+        private fun generateDefaultKeyGenParameterSpecBuilder(alias: String): KeyGenParameterSpec.Builder {
             return KeyGenParameterSpec.Builder(
                 alias,
                 KeyProperties.PURPOSE_SIGN
