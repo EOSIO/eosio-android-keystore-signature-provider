@@ -1,11 +1,11 @@
 ![Android Logo](img/android-logo.png)
-# EOSIO SDK for Android: Android KeyStore Signature Provider ![EOSIO Alpha](https://img.shields.io/badge/EOSIO-Alpha-blue.svg)
+# EOSIO SDK for Java: Android KeyStore Signature Provider ![EOSIO Alpha](https://img.shields.io/badge/EOSIO-Alpha-blue.svg)
 
 [![Software License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/EOSIO/eosio-java-softkey-signature-provider/blob/master/LICENSE)
 ![Language Kotlin](https://img.shields.io/badge/Language-Kotlin-yellow.svg)
 ![](https://img.shields.io/badge/Deployment%20Target-Android-blue.svg)
 
-Android KeyStore Signature Provider is an example pluggable signature provider for [EOSIO SDK for Java](https://github.com/EOSIO/eosio-java). It allows for signing transactions using Android KeyStore keys.
+Android KeyStore Signature Provider is an example pluggable signature provider for [EOSIO SDK for Java](https://github.com/EOSIO/eosio-java) written in Kotlin. It allows for signing transactions using Android KeyStore keys.
 
 *All product and company names are trademarks™ or registered® trademarks of their respective holders. Use of them does not imply any affiliation with or endorsement by them.*
 
@@ -27,7 +27,7 @@ The Signature Provider abstraction is arguably the most useful of all of the [EO
 * finding out what keys are available for signing (`getAvailableKeys`), and
 * requesting and obtaining transaction signatures with a subset of the available keys (`signTransaction`).
 
-By simply switching out the signature provider on a transaction, signature requests can be routed any number of ways. Need a signature from keys in the platform's Keychain or KeyStore? Configure the [TransactionSession](https://github.com/EOSIO/eosio-java/blob/master/eosiojava/src/main/java/one/block/eosiojava/session/TransactionSession.java) with a conforming signature provider that exposes that functionality. Need signatures from a wallet on the user's device? A signature provider can do that too!
+By simply switching out the signature provider on a transaction, signature requests can be routed any number of ways. 
 
 All signature providers must conform to the [ISignatureProvider](https://github.com/EOSIO/eosio-java/blob/master/eosiojava/src/main/java/one/block/eosiojava/interfaces/ISignatureProvider.java) Protocol.
 
@@ -37,7 +37,7 @@ All signature providers must conform to the [ISignatureProvider](https://github.
 * Kotlin 1.3.31+
 * Gradle 4.10.1+
 
-Since EOSIO SDK for Android: Android KeyStore Signature Provider is an Android specific project, we recommend using Android Studio if you are going to work on it.  
+Since EOSIO SDK for Java: Android KeyStore Signature Provider is an Android specific project, we recommend using Android Studio if you are going to work on it.  
 
 ## Installation
 
@@ -47,7 +47,7 @@ To use Android KeyStore Signature Provider with EOSIO SDK for Java in your app, 
 
 ```java
 implementation 'one.block:eosiojava:0.1.0'
-implementation 'one.block: eosioandroidkeystoresignatureprovider:0.1.0'
+implementation 'one.block:eosioandroidkeystoresignatureprovider:0.1.0'
 ```
 
 If you are using Android KeyStore Signature Provider, or any library that depends on it, in an Android application you must also add the following to your application's `build.gradle` file in the `android` section:
@@ -112,7 +112,7 @@ This library is an example implementation of [ISignatureProvider](https://github
 * `signTransaction(EosioTransactionSignatureRequest eosioTransactionSignatureRequest)` signs a `Transaction`
 * `getAvailableKeys()` returns an array containing the public keys associated with the private keys that the object is initialized with
 
-The library also includes a utility class that allows the user to manage keys in the Android Keystore (e.g. query, add, or delete).  Key management includes the ability to ad password protection and use user defined aliases to label and query the keys.  The keys that are queried are automatically converted to the EOS format so that they are automatically compatible with EOS mainnet applications.  The class is called EosioAndroidKeyStoreUtility and can be referenced as follows:
+The library also includes a utility class that allows the user to manage keys in the Android Keystore (e.g. query, add, or delete).  Key management includes the ability to add password protection and use user-defined aliases to label and query the keys.  The keys that are queried are automatically converted to the EOS format so that they are automatically compatible with EOS mainnet applications.  The class is called EosioAndroidKeyStoreUtility and can be referenced as follows:
 
 Generate a key by calling:
 
@@ -120,7 +120,7 @@ Generate a key by calling:
 
 Query all keys in KeyStore by calling:
 
-* `EosioAndroidKeyStoreUtility.getAllAndroidKeyStoreKeyInEOSIOFormat(
+* `EosioAndroidKeyStoreUtility.getAllAndroidKeyStoreKeysInEOSIOFormat(
             password: KeyStore.ProtectionParameter?,
             loadStoreParameter: KeyStore.LoadStoreParameter?)`
         
@@ -147,7 +147,7 @@ Delete a key in the KeyStore by its alias by calling:
             
 Delete all keys in the KeyStore by calling:
 
-* `EosioAndroidKeyStoreUtility.deleteAllKey(loadStoreParameter: KeyStore.LoadStoreParameter?)`
+* `EosioAndroidKeyStoreUtility.deleteAllKeys(loadStoreParameter: KeyStore.LoadStoreParameter?)`
 
 ## Want to help?
 
