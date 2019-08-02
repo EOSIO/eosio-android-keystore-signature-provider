@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull
 import java.lang.Exception
 
 /**
- * Error class that will be thrown for any error happens on [one.block.eosiojavaandroidkeystoresignatureprovider.EosioAndroidKeyStoreUtility.deleteAllKeys] and [one.block.eosiojavaandroidkeystoresignatureprovider.EosioAndroidKeyStoreUtility.deleteKeyByAlias]
+ * Error class that will be thrown when exceptions occur while calling [one.block.eosiojavaandroidkeystoresignatureprovider.EosioAndroidKeyStoreUtility.deleteAllKeys] and [one.block.eosiojavaandroidkeystoresignatureprovider.EosioAndroidKeyStoreUtility.deleteKeyByAlias]
  */
 class AndroidKeyStoreDeleteError : SignatureProviderError {
     constructor() : super()

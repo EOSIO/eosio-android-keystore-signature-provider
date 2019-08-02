@@ -39,10 +39,10 @@ class EosioAndroidKeyStoreUtility {
         private const val PEM_OBJECT_TYPE_PUBLIC_KEY = "PUBLIC KEY"
 
         /**
-         * Generate a new key inside AndroidKeyStore by the given [keyGenParameterSpec] and return the new key in EOS format
+         * Generate a new key inside Android KeyStore by the given [keyGenParameterSpec] and return the new key in EOS format
          * 
          * The given [keyGenParameterSpec] is the parameter specification to generate a new key. This specification
-         * must include the following information if the key to be generated needs to be EOS mainnet compliant:
+         * must include the following information if the key to be generated needs to be EOS Mainnet compliant:
          *
          * - [KeyGenParameterSpec] must include [KeyProperties.PURPOSE_SIGN]
          * - [KeyGenParameterSpec.getAlgorithmParameterSpec] must be of type [ECGenParameterSpec]
@@ -50,12 +50,12 @@ class EosioAndroidKeyStoreUtility {
          */
         @JvmStatic
         fun generateAndroidKeyStoreKey(keyGenParameterSpec: KeyGenParameterSpec): String {
-            // Parameter Spec must includes PURPOSE_SIGN
+            // Parameter Spec must include PURPOSE_SIGN
             if (KeyProperties.PURPOSE_SIGN and keyGenParameterSpec.purposes != KeyProperties.PURPOSE_SIGN) {
                 throw InvalidKeyGenParameter(GENERATE_KEY_MUST_HAS_PURPOSE_SIGN)
             }
 
-            // Parameter Spec's algorithm spec must be ECGenParameterSpec
+            // Parameter Spec's algorithm spec must be of type ECGenParameterSpec
             if (keyGenParameterSpec.algorithmParameterSpec !is ECGenParameterSpec) {
                 throw InvalidKeyGenParameter(GENERATE_KEY_KEYGENSPEC_MUST_USE_EC)
             }
@@ -90,7 +90,7 @@ class EosioAndroidKeyStoreUtility {
         }
 
         /**
-         * Convert an ECPublic Key (SECP256R1) that resides in the AndroidKeyStore to EOS format
+         * Convert an ECPublic Key (SECP256R1) that resides in the Android KeyStore to EOS format
          * @param androidECPublicKey ECPublicKey - the ECPublic Key (SECP256R1) to convert
          * @return String - EOS format of the provided key
          */
@@ -125,7 +125,7 @@ class EosioAndroidKeyStoreUtility {
          * @param password KeyStore.ProtectionParameter? - the password to load all the keys
          * @param loadStoreParameter KeyStore.LoadStoreParameter? - the KeyStore Parameter to load the KeyStore instance
          *
-         * @return List<String> - List of SECP256R1 keys inside AndroidKeyStore (EOS Format)
+         * @return List<String> - List of SECP256R1 keys inside Android KeyStore (EOS Format)
          */
         @JvmStatic
         fun getAllAndroidKeyStoreKeysInEOSFormat(
@@ -231,7 +231,7 @@ class EosioAndroidKeyStoreUtility {
 
                 ks.deleteEntry(keyAliasToDelete)
 
-                // If the key is still exist, return false. Otherwise, return true
+                // If the key still exists, return false. Otherwise, return true
                 return !ks.containsAlias(keyAliasToDelete)
             } catch (ex: Exception) {
                 throw AndroidKeyStoreDeleteError(DELETE_KEY_KEYSTORE_GENERIC_ERROR, ex)

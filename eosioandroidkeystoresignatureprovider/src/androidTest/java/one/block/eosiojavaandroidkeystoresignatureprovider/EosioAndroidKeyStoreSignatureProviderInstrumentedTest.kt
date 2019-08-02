@@ -74,7 +74,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
      *
      * Clear all the keys before calling the method
      *
-     * Expect to get an empty list from AndroidKeyStore
+     * Expect to get an empty list from Android KeyStore
      */
     @Test
     fun getAvailableKeyWithNoKey_expectEmpty() {
@@ -95,7 +95,8 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
      * Generate [TEST_CONST_GET_AVAILABLE_KEY_MULTIPLE_KEY_AMOUNT] keys
      *
      * Expect to get [TEST_CONST_GET_AVAILABLE_KEY_MULTIPLE_KEY_AMOUNT] keys with EOS format
-     *  Clear all keys
+     *
+     * Clear all keys
      */
     @Test
     fun getAvailableKeyWithMultipleKeyAdded_expectMultipleKey() {
@@ -131,7 +132,8 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
      * Generate [TEST_CONST_GET_AVAILABLE_KEY_MULTIPLE_KEY_AMOUNT_MAX_TO_STRESS] keys
      *
      * Expect to get [TEST_CONST_GET_AVAILABLE_KEY_MULTIPLE_KEY_AMOUNT_MAX_TO_STRESS] keys with EOS format
-     *  Clear all keys
+     *
+     * Clear all keys
      */
     @Test
     fun getAvailableKeyWithStressOutMaxMultipleKeyAdded_expectMultipleKeyStressOutMax() {
@@ -229,7 +231,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
 
         val signingPublicKeys: MutableList<String> = ArrayList()
 
-        // Get just added key to the signing key to request the KeyStore to sign
+        // Use keys generated in KeyStore to sign a transaction.
         // Generate keys
         for (i in 0 until TEST_CONST_GET_AVAILABLE_KEY_MULTIPLE_KEY_AMOUNT) {
             EosioAndroidKeyStoreUtility.generateAndroidKeyStoreKey(alias = "${TEST_CONST_TEST_KEY_NAME}_$i")
@@ -287,7 +289,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
         EosioAndroidKeyStoreUtility.deleteAllKeys(loadStoreParameter = null)
         val signingPublicKeys: MutableList<String> = ArrayList()
 
-        // Get just added key to the signing key to request the KeyStore to sign
+        //Use keys generated in KeyStore to sign a transaction.
         EosioAndroidKeyStoreUtility.generateAndroidKeyStoreKey(TEST_CONST_TEST_KEY_NAME)
         signingPublicKeys.add(
             EosioAndroidKeyStoreUtility.getAndroidKeyStoreKeyInEOSFormat(
@@ -313,7 +315,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
     }
 
     /**
-     * Unhappy test signTransaction with No key
+     * Unhappy path test - sign transaction without a key
      *
      * Expect to throw [QueryAndroidKeyStoreError] with message [QUERY_ANDROID_KEYSTORE_GENERIC_ERROR]
      *
@@ -321,7 +323,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
      *
      * Delete all keys
      *
-     * Call [EosioAndroidKeyStoreUtility.getAndroidKeyStoreKeyInEOSFormat] to query an EOS public key from AndroidKeyStore without adding it
+     * Call [EosioAndroidKeyStoreUtility.getAndroidKeyStoreKeyInEOSFormat] to query an EOS public key from Android KeyStore without adding it
      *
      * [QueryAndroidKeyStoreError] is expected to be thrown
      */
@@ -343,7 +345,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
     }
 
     /**
-     * Unhappy test [EosioAndroidKeyStoreUtility.generateAndroidKeyStoreKey] with an [KeyGenParameterSpec] which has invalid algorithm
+     * Unhappy path test - [EosioAndroidKeyStoreUtility.generateAndroidKeyStoreKey] with an [KeyGenParameterSpec] which has invalid algorithm
      *
      * Expect to throw [InvalidKeyGenParameter] with message [GENERATE_KEY_KEYGENSPEC_MUST_USE_EC]
      *
@@ -427,7 +429,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
     }
 
     /**
-     * Delete a key in AndroidKeyStore for testing
+     * Delete a key in Android KeyStore for testing
      */
     private fun deleteKeyInAndroidKeyStore(alias: String) {
         Assert.assertTrue(
