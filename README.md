@@ -1,11 +1,11 @@
 ![Android Logo](img/android-logo.png)
-# EOSIO SDK for Java: Android KeyStore Signature Provider ![EOSIO Alpha](https://img.shields.io/badge/EOSIO-Alpha-blue.svg)
+# EOSIO SDK for Java: Android Keystore Signature Provider ![EOSIO Alpha](https://img.shields.io/badge/EOSIO-Alpha-blue.svg)
 
 [![Software License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/EOSIO/eosio-java-softkey-signature-provider/blob/master/LICENSE)
 ![Language Kotlin](https://img.shields.io/badge/Language-Kotlin-yellow.svg)
 ![](https://img.shields.io/badge/Deployment%20Target-Android-blue.svg)
 
-Android KeyStore Signature Provider is an example pluggable signature provider for [EOSIO SDK for Java](https://github.com/EOSIO/eosio-java) written in Kotlin. It allows for signing transactions using Android KeyStore keys.
+Android Keystore Signature Provider is an example pluggable signature provider for [EOSIO SDK for Java](https://github.com/EOSIO/eosio-java) written in Kotlin. It allows for signing transactions using Android Keystore keys.
 
 *All product and company names are trademarks™ or registered® trademarks of their respective holders. Use of them does not imply any affiliation with or endorsement by them.*
 
@@ -37,20 +37,20 @@ All signature providers must conform to the [ISignatureProvider](https://github.
 * Kotlin 1.3.31+
 * Gradle 4.10.1+
 
-Since EOSIO SDK for Java: Android KeyStore Signature Provider is an Android specific project, we recommend using Android Studio if you are going to work on it.  
+Since EOSIO SDK for Java: Android Keystore Signature Provider is an Android specific project, we recommend using Android Studio if you are going to work on it.  
 
 ## Installation
 
 This provider is intended to be used in conjunction with [EOSIO SDK for Java](https://github.com/EOSIO/eosio-java) as a provider plugin.
 
-To use Android KeyStore Signature Provider with EOSIO SDK for Java in your app, add the following modules to your `build.gradle`:
+To use Android Keystore Signature Provider with EOSIO SDK for Java in your app, add the following modules to your `build.gradle`:
 
 ```java
 implementation 'one.block:eosiojava:0.1.0'
 implementation 'one.block:eosioandroidkeystoresignatureprovider:0.1.0'
 ```
 
-If you are using Android KeyStore Signature Provider, or any library that depends on it, in an Android application you must also add the following to your application's `build.gradle` file in the `android` section:
+If you are using Android Keytore Signature Provider, or any library that depends on it, in an Android application you must also add the following to your application's `build.gradle` file in the `android` section:
 
 ```groovy
 // Needed to get bitcoin-j to produce a valid apk for android.
@@ -118,20 +118,20 @@ Generate a key by calling:
 
 * `EosioAndroidKeyStoreUtility.generateAndroidKeyStoreKey(alias:String)`
 
-Query all keys in KeyStore by calling:
+Query all keys in Keystore by calling:
 
 * `EosioAndroidKeyStoreUtility.getAllAndroidKeyStoreKeysInEOSIOFormat(
             password: KeyStore.ProtectionParameter?,
             loadStoreParameter: KeyStore.LoadStoreParameter?)`
         
-Query a specific key in the KeyStore by calling:
+Query a specific key in the Keystore by calling:
 
 * `EosioAndroidKeyStoreUtility.getAndroidKeyStoreKeyInEOSIOFormat(
             alias: String,
             password: KeyStore.ProtectionParameter?,
             loadStoreParameter: KeyStore.LoadStoreParameter?)`
             
-Sign any data with a specific key in the KeyStore by calling:
+Sign any data with a specific key in the Keystore by calling:
 
 * `EosioAndroidKeyStoreUtility.sign(
             data: ByteArray,
@@ -139,13 +139,13 @@ Sign any data with a specific key in the KeyStore by calling:
             password: KeyStore.ProtectionParameter?,
             loadStoreParameter: KeyStore.LoadStoreParameter?)`
             
-Delete a key in the KeyStore by its alias by calling:
+Delete a key in the Keystore by its alias by calling:
 
 * `EosioAndroidKeyStoreUtility.deleteKeyByAlias(
             keyAliasToDelete: String,
             loadStoreParameter: KeyStore.LoadStoreParameter?)`
             
-Delete all keys in the KeyStore by calling:
+Delete all keys in the Keystore by calling:
 
 * `EosioAndroidKeyStoreUtility.deleteAllKeys(loadStoreParameter: KeyStore.LoadStoreParameter?)`
 
