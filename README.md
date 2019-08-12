@@ -18,7 +18,7 @@ Android Keystore Signature Provider is an example pluggable signature provider f
 - [Android Example App](#android-example-app)
 - [Library Methods](#library-methods)
 - [Want to Help?](#want-to-help)
-- [License & Legal](#license)
+- [Important](#important)
 
 ## About Signature Providers
 

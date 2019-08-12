@@ -95,12 +95,12 @@ deploy:
       all_branches: true
       condition: $TRAVIS_BRANCH == master || ${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH} =~ ^release\/.*$
   # tagged releases from master, go to distribution
-  - provider: script
-    skip_cleanup: true
-    script: "bash scripts/deploy-artifactory.sh 'eosioandroidkeystoresignatureprovider-product-eosio-dist'" 
-    on:
-      tags: true
-      branch: master
+  # - provider: script
+  #   skip_cleanup: true
+  #   script: "bash scripts/deploy-artifactory.sh 'eosioandroidkeystoresignatureprovider-product-eosio-dist'" 
+  #   on:
+  #     tags: true
+  #     branch: master
 
 after_deploy: 
   - echo "cleaning up properties"
