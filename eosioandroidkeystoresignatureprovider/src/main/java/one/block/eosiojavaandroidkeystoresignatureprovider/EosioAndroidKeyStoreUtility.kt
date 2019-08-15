@@ -197,20 +197,22 @@ class EosioAndroidKeyStoreUtility {
             password: KeyStore.ProtectionParameter?,
             loadStoreParameter: KeyStore.LoadStoreParameter?
         ): ByteArray? {
-            try {
-                val ks: KeyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply {
-                    load(loadStoreParameter)
-                }
+            synchronized(EosioAndroidKeyStoreUtility.javaClass) {
+              try {
+                  val ks: KeyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply {
+                      load(loadStoreParameter)
+                  }
 
-                val key = ks.getEntry(alias, password) as KeyStore.PrivateKeyEntry
+                  val key = ks.getEntry(alias, password) as KeyStore.PrivateKeyEntry
 
-                return Signature.getInstance(ANDROID_ECDSA_SIGNATURE_ALGORITHM).run {
-                    initSign(key.privateKey)
-                    update(data)
-                    sign()
-                }
-            } catch (ex: Exception) {
-                throw AndroidKeyStoreSigningError(ex)
+                  return Signature.getInstance(ANDROID_ECDSA_SIGNATURE_ALGORITHM).run {
+                      initSign(key.privateKey)
+                      update(data)
+                      sign()
+                  }
+              } catch (ex: Exception) {
+                  throw AndroidKeyStoreSigningError(ex)
+              }
             }
         }
 
@@ -224,17 +226,19 @@ class EosioAndroidKeyStoreUtility {
         @Throws(AndroidKeyStoreDeleteError::class)
         @JvmStatic
         fun deleteKeyByAlias(keyAliasToDelete: String, loadStoreParameter: KeyStore.LoadStoreParameter?): Boolean {
-            try {
-                val ks: KeyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply {
-                    load(loadStoreParameter)
-                }
+            synchronized(EosioAndroidKeyStoreUtility.javaClass) {
+              try {
+                  val ks: KeyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply {
+                      load(loadStoreParameter)
+                  }
 
-                ks.deleteEntry(keyAliasToDelete)
+                  ks.deleteEntry(keyAliasToDelete)
 
-                // If the key still exists, return false. Otherwise, return true
-                return !ks.containsAlias(keyAliasToDelete)
-            } catch (ex: Exception) {
-                throw AndroidKeyStoreDeleteError(DELETE_KEY_KEYSTORE_GENERIC_ERROR, ex)
+                  // If the key still exists, return false. Otherwise, return true
+                  return !ks.containsAlias(keyAliasToDelete)
+              } catch (ex: Exception) {
+                  throw AndroidKeyStoreDeleteError(DELETE_KEY_KEYSTORE_GENERIC_ERROR, ex)
+              }
             }
         }
 
@@ -246,14 +250,16 @@ class EosioAndroidKeyStoreUtility {
         @Throws(AndroidKeyStoreDeleteError::class)
         @JvmStatic
         fun deleteAllKeys(loadStoreParameter: KeyStore.LoadStoreParameter?) {
-            try {
-                val ks: KeyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply {
-                    load(loadStoreParameter)
-                }
+            synchronized(EosioAndroidKeyStoreUtility.javaClass) {
+              try {
+                  val ks: KeyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply {
+                      load(loadStoreParameter)
+                  }
 
-                ks.aliases().toList().forEach { ks.deleteEntry(it) }
-            } catch (ex: Exception) {
-                throw AndroidKeyStoreDeleteError(DELETE_KEY_KEYSTORE_GENERIC_ERROR, ex)
+                  ks.aliases().toList().forEach { ks.deleteEntry(it) }
+              } catch (ex: Exception) {
+                  throw AndroidKeyStoreDeleteError(DELETE_KEY_KEYSTORE_GENERIC_ERROR, ex)
+              }
             }
         }
 
