@@ -17,6 +17,7 @@ Android Keystore Signature Provider is an example pluggable signature provider f
 - [Basic Usage](#basic-usage)
 - [Android Example App](#android-example-app)
 - [Library Methods](#library-methods)
+- [Releases](#releases)
 - [Want to Help?](#want-to-help)
 - [Important](#important)
 
@@ -46,8 +47,8 @@ This provider is intended to be used in conjunction with [EOSIO SDK for Java](ht
 To use Android Keystore Signature Provider with EOSIO SDK for Java in your app, add the following modules to your `build.gradle`:
 
 ```java
-implementation 'one.block:eosiojava:0.1.0'
-implementation 'one.block:eosioandroidkeystoresignatureprovider:0.1.0'
+implementation 'one.block:eosiojava:0.1.2'
+implementation 'one.block:eosioandroidkeystoresignatureprovider:0.1.1'
 ```
 
 If you are using Android Keytore Signature Provider, or any library that depends on it, in an Android application you must also add the following to your application's `build.gradle` file in the `android` section:
@@ -148,6 +149,12 @@ Delete a key in the Keystore by its alias by calling:
 Delete all keys in the Keystore by calling:
 
 * `EosioAndroidKeyStoreUtility.deleteAllKeys(loadStoreParameter: KeyStore.LoadStoreParameter?)`
+
+## Releases
+
+2/27/20
+
+Version 0.1.1 The version consumes the new eosio-java library version 0.1.2.
 
 ## Want to help?
 
