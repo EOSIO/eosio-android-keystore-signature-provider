@@ -19,8 +19,11 @@ import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
 import java.math.BigInteger
+import java.security.NoSuchAlgorithmException
 import java.security.spec.ECGenParameterSpec
 import java.security.spec.RSAKeyGenParameterSpec
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
 
 /**
  * Test class for [EosioAndroidKeyStoreSignatureProvider]
@@ -426,6 +429,63 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
             .setAlgorithmParameterSpec(ECGenParameterSpec("secp256k1")).build()
 
         EosioAndroidKeyStoreUtility.generateAndroidKeyStoreKey(invalidCurveKeyGenParameterSpec)
+    }
+
+    @Test
+    fun testGetAvailableKeysWithPrivateKeyEntryOnly() {
+        val differentKeyName: String = "different_key_type_alias"
+        // Create different kinds of secured key in AndroidKeyStore
+        val keyGenerator: KeyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
+
+        val keyGenParameterSpec = KeyGenParameterSpec.Builder(
+            differentKeyName,
+            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+        )
+            .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+            .build()
+
+        keyGenerator.init(keyGenParameterSpec)
+        keyGenerator.generateKey()
+
+        this.generateKeyByAlgorithmName(KeyProperties.KEY_ALGORITHM_AES, "${differentKeyName}_${KeyProperties.KEY_ALGORITHM_AES}")
+        this.generateKeyByAlgorithmName(KeyProperties.KEY_ALGORITHM_HMAC_SHA1, "${differentKeyName}_${KeyProperties.KEY_ALGORITHM_HMAC_SHA1}")
+        this.generateKeyByAlgorithmName(KeyProperties.KEY_ALGORITHM_HMAC_SHA224, "${differentKeyName}_${KeyProperties.KEY_ALGORITHM_HMAC_SHA224}")
+        this.generateKeyByAlgorithmName(KeyProperties.KEY_ALGORITHM_HMAC_SHA256, "${differentKeyName}_${KeyProperties.KEY_ALGORITHM_HMAC_SHA256}")
+        this.generateKeyByAlgorithmName(KeyProperties.KEY_ALGORITHM_HMAC_SHA384, "${differentKeyName}_${KeyProperties.KEY_ALGORITHM_HMAC_SHA384}")
+        this.generateKeyByAlgorithmName(KeyProperties.KEY_ALGORITHM_HMAC_SHA512, "${differentKeyName}_${KeyProperties.KEY_ALGORITHM_HMAC_SHA512}")
+        this.generateKeyByAlgorithmName(KeyProperties.KEY_ALGORITHM_RSA, "${differentKeyName}_${KeyProperties.KEY_ALGORITHM_RSA}")
+        this.generateKeyByAlgorithmName(KeyProperties.KEY_ALGORITHM_3DES, "${differentKeyName}_${KeyProperties.KEY_ALGORITHM_3DES}")
+
+        EosioAndroidKeyStoreUtility.generateAndroidKeyStoreKey(alias = TEST_CONST_TEST_KEY_NAME)
+
+        val allKeyInKeyStore: List<Pair<String, String>> =
+            EosioAndroidKeyStoreUtility.getAllAndroidKeyStoreKeysInEOSFormat(null, null)
+
+        Assert.assertEquals(1, allKeyInKeyStore.size)
+        Assert.assertEquals(TEST_CONST_TEST_KEY_NAME, allKeyInKeyStore[0].first)
+
+        // Clear keys
+        EosioAndroidKeyStoreUtility.deleteAllKeys(null)
+    }
+
+    private fun generateKeyByAlgorithmName(algorithmName : String, keyName : String) {
+        try {
+            val keyGenerator: KeyGenerator = KeyGenerator.getInstance(algorithmName, "AndroidKeyStore")
+
+            val keyGenParameterSpec = KeyGenParameterSpec.Builder(
+                keyName,
+                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+            )
+                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                .build()
+
+            keyGenerator.init(keyGenParameterSpec)
+            keyGenerator.generateKey()
+        } catch (ex : NoSuchAlgorithmException) {
+            ex.printStackTrace()
+        }
     }
 
     /**

@@ -137,17 +137,19 @@ class EosioAndroidKeyStoreUtility {
             val aliases = keyStore.aliases()
 
             for (alias in aliases) {
-                val keyEntry = keyStore.getEntry(alias, password) as KeyStore.PrivateKeyEntry
-                val ecPublicKey = KeyFactory.getInstance(keyEntry.certificate.publicKey.algorithm).generatePublic(
-                    X509EncodedKeySpec(keyEntry.certificate.publicKey.encoded)
-                ) as ECPublicKey
+                val keyEntry = keyStore.getEntry(alias, password)
+                if (keyEntry is KeyStore.PrivateKeyEntry) {
+                    val ecPublicKey = KeyFactory.getInstance(keyEntry.certificate.publicKey.algorithm).generatePublic(
+                        X509EncodedKeySpec(keyEntry.certificate.publicKey.encoded)
+                    ) as ECPublicKey
 
-                aliasKeyPair.add(
-                    Pair(
-                        alias,
-                        this.convertAndroidKeyStorePublicKeyToEOSFormat(androidECPublicKey = ecPublicKey)
+                    aliasKeyPair.add(
+                        Pair(
+                            alias,
+                            this.convertAndroidKeyStorePublicKeyToEOSFormat(androidECPublicKey = ecPublicKey)
+                        )
                     )
-                )
+                }
             }
 
             return aliasKeyPair
