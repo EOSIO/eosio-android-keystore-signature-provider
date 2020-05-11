@@ -230,6 +230,8 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
      *
      * Verify transaction with public key
      *
+     * Verify context free data
+     *
      * Clear key
      */
     @Test
