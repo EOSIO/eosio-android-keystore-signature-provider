@@ -35,11 +35,21 @@ class EosioAndroidKeyStoreSignatureProvider private constructor() : ISignaturePr
         // Prepare message to be signed.
         // Getting serializedTransaction and preparing signable transaction
         val serializedTransaction: String = eosioTransactionSignatureRequest.serializedTransaction
+        //TODO: Fix once eosio-java is merged
+        //val serializedContextFreeData: String = eosioTransactionSignatureRequest.serializedContextFreeData
 
         // This is the un-hashed message which is used to recover public key
         val message: ByteArray
 
         try {
+            //TODO: Fix once eosio-java is merged
+//            message = Hex.decode(
+//                    EOSFormatter.prepareSerializedTransactionForSigning(
+//                            serializedTransaction,
+//                            eosioTransactionSignatureRequest.chainId,
+//                            serializedContextFreeData
+//                    )
+//            )
             message = Hex.decode(
                 EOSFormatter.prepareSerializedTransactionForSigning(
                     serializedTransaction,
@@ -47,6 +57,10 @@ class EosioAndroidKeyStoreSignatureProvider private constructor() : ISignaturePr
                 ).toUpperCase()
             )
         } catch (eosFormatterError: EOSFormatterError) {
+            //TODO: Fix once eosio-java is merged
+//            if (!serializedContextFreeData.isEmpty()) {
+//                throw new SignTransactionError(String.format(SoftKeySignatureErrorConstants.SIGN_TRANS_PREPARE_SIGNABLE_TRANS_OR_CONTEXT_FREE_DATA_ERROR, serializedTransaction, serializedContextFreeData), eosFormatterError);
+//            }
             throw SignTransactionError(
                 String.format(
                     SIGN_TRANSACTION_PREPARE_FOR_SIGNING_GENERIC_ERROR,
@@ -94,6 +108,8 @@ class EosioAndroidKeyStoreSignatureProvider private constructor() : ISignaturePr
             )
         }
 
+        //TODO: Fix once eosio-java is merged
+        //return new EosioTransactionSignatureResponse(serializedTransaction, serializedContextFreeData, signatures, null);
         return EosioTransactionSignatureResponse(serializedTransaction, signatures, null)
     }
 
