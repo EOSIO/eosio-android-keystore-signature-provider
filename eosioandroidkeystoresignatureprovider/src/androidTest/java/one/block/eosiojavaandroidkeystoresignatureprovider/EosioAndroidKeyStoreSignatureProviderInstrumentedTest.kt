@@ -248,8 +248,8 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
                 )
         )
 
-        val transactionSignatureRequest: FakeEosioTransactionSignatureRequest =
-                FakeEosioTransactionSignatureRequest(
+        val transactionSignatureRequest: EosioTransactionSignatureRequest =
+                EosioTransactionSignatureRequest(
                         TEST_CONST_SERIALIZED_TRANSACTION,
                         signingPublicKeys,
                         TEST_CONST_CHAIN_ID,
@@ -258,9 +258,9 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
                         TEST_CONST_SERIALIZED_CONTEXT_FREE_DATA
                 )
 
-        val eosioAndroidKeyStoreSignatureProvider: FakeEosioAndroidKeyStoreSignatureProvider =
-                FakeEosioAndroidKeyStoreSignatureProvider.Builder().build()
-        val transactionSignatureResponse: FakeEosioTransactionSignatureResponse =
+        val eosioAndroidKeyStoreSignatureProvider: EosioAndroidKeyStoreSignatureProvider =
+                EosioAndroidKeyStoreSignatureProvider.Builder().build()
+        val transactionSignatureResponse: EosioTransactionSignatureResponse =
                 eosioAndroidKeyStoreSignatureProvider.signTransaction(transactionSignatureRequest)
 
         Assert.assertNull(transactionSignatureResponse.error)
