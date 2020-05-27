@@ -46,7 +46,7 @@ class EosioAndroidKeyStoreSignatureProvider private constructor() : ISignaturePr
                             serializedTransaction,
                             eosioTransactionSignatureRequest.chainId,
                             serializedContextFreeData
-                    )
+                    ).toUpperCase()
             )
         } catch (eosFormatterError: EOSFormatterError) {
             throw SignTransactionError(
