@@ -38,6 +38,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
         const val TEST_CONST_SECP256R1_EOS_PREFIX = "PUB_R1_"
         const val TEST_CONST_SERIALIZED_TRANSACTION: String =
             "8BC2A35CF56E6CC25F7F000000000100A6823403EA3055000000572D3CCDCD01000000000000C03400000000A8ED32322A000000000000C034000000000000A682A08601000000000004454F530000000009536F6D657468696E6700"
+        const val TEST_CONST_SERIALIZED_CONTEXT_FREE_DATA: String = "c21bfb5ad4b64bfd04838b3b14f0ce0c7b92136cac69bfed41bef92f95a9bb20";
         const val TEST_CONST_CHAIN_ID: String = "687fa513e18843ad3e820744f4ffcf93b1354036d80737db8dc444fe4b15ad17"
     }
 
@@ -206,7 +207,62 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
             eosioAndroidKeyStoreSignatureProvider.signTransaction(transactionSignatureRequest)
 
         Assert.assertNull(transactionSignatureResponse.error)
-        Assert.assertEquals(TEST_CONST_SERIALIZED_TRANSACTION, transactionSignatureResponse.serializeTransaction)
+        Assert.assertEquals(TEST_CONST_SERIALIZED_TRANSACTION, transactionSignatureResponse.serializedTransaction)
+        Assert.assertEquals(1, transactionSignatureResponse.signatures.size)
+        Assert.assertNotEquals("", transactionSignatureResponse.signatures[0])
+        Assert.assertTrue(transactionSignatureResponse.signatures[0].contains("SIG_R1_", true))
+
+        EosioAndroidKeyStoreUtility.deleteAllKeys(loadStoreParameter = null)
+
+    }
+
+    /**
+     * Test [EosioAndroidKeyStoreSignatureProvider.signTransaction] method
+     *
+     * Generate new key
+     *
+     * Making a mocked transaction request
+     *
+     * Sign transaction
+     *
+     * Verify transaction with public key
+     *
+     * Verify context free data
+     *
+     * Clear key
+     */
+    @Test
+    fun signTransactionWithContextFreeData() {
+        val signingPublicKeys: MutableList<String> = ArrayList()
+
+        // Use the key that was just added to the keystore to sign a transaction.
+        EosioAndroidKeyStoreUtility.generateAndroidKeyStoreKey(TEST_CONST_TEST_KEY_NAME)
+        signingPublicKeys.add(
+                EosioAndroidKeyStoreUtility.getAndroidKeyStoreKeyInEOSFormat(
+                        alias = TEST_CONST_TEST_KEY_NAME,
+                        password = null,
+                        loadStoreParameter = null
+                )
+        )
+
+        val transactionSignatureRequest: EosioTransactionSignatureRequest =
+                EosioTransactionSignatureRequest(
+                        TEST_CONST_SERIALIZED_TRANSACTION,
+                        signingPublicKeys,
+                        TEST_CONST_CHAIN_ID,
+                        ArrayList(),
+                        false,
+                        TEST_CONST_SERIALIZED_CONTEXT_FREE_DATA
+                )
+
+        val eosioAndroidKeyStoreSignatureProvider: EosioAndroidKeyStoreSignatureProvider =
+                EosioAndroidKeyStoreSignatureProvider.Builder().build()
+        val transactionSignatureResponse: EosioTransactionSignatureResponse =
+                eosioAndroidKeyStoreSignatureProvider.signTransaction(transactionSignatureRequest)
+
+        Assert.assertNull(transactionSignatureResponse.error)
+        Assert.assertEquals(TEST_CONST_SERIALIZED_TRANSACTION, transactionSignatureResponse.serializedTransaction)
+        Assert.assertEquals(TEST_CONST_SERIALIZED_CONTEXT_FREE_DATA, transactionSignatureResponse.serializedContextFreeData)
         Assert.assertEquals(1, transactionSignatureResponse.signatures.size)
         Assert.assertNotEquals("", transactionSignatureResponse.signatures[0])
         Assert.assertTrue(transactionSignatureResponse.signatures[0].contains("SIG_R1_", true))
@@ -262,7 +318,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
             eosioAndroidKeyStoreSignatureProvider.signTransaction(transactionSignatureRequest)
 
         Assert.assertNull(transactionSignatureResponse.error)
-        Assert.assertEquals(TEST_CONST_SERIALIZED_TRANSACTION, transactionSignatureResponse.serializeTransaction)
+        Assert.assertEquals(TEST_CONST_SERIALIZED_TRANSACTION, transactionSignatureResponse.serializedTransaction)
         Assert.assertEquals(
             TEST_CONST_GET_AVAILABLE_KEY_MULTIPLE_KEY_AMOUNT,
             transactionSignatureResponse.signatures.size

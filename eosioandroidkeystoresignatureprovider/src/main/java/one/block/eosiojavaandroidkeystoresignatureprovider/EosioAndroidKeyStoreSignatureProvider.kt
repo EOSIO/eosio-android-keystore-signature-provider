@@ -35,16 +35,18 @@ class EosioAndroidKeyStoreSignatureProvider private constructor() : ISignaturePr
         // Prepare message to be signed.
         // Getting serializedTransaction and preparing signable transaction
         val serializedTransaction: String = eosioTransactionSignatureRequest.serializedTransaction
+        val serializedContextFreeData: String = eosioTransactionSignatureRequest.serializedContextFreeData
 
         // This is the un-hashed message which is used to recover public key
         val message: ByteArray
 
         try {
             message = Hex.decode(
-                EOSFormatter.prepareSerializedTransactionForSigning(
-                    serializedTransaction,
-                    eosioTransactionSignatureRequest.chainId
-                ).toUpperCase()
+                    EOSFormatter.prepareSerializedTransactionForSigning(
+                            serializedTransaction,
+                            eosioTransactionSignatureRequest.chainId,
+                            serializedContextFreeData
+                    ).toUpperCase()
             )
         } catch (eosFormatterError: EOSFormatterError) {
             throw SignTransactionError(
@@ -94,7 +96,7 @@ class EosioAndroidKeyStoreSignatureProvider private constructor() : ISignaturePr
             )
         }
 
-        return EosioTransactionSignatureResponse(serializedTransaction, signatures, null)
+        return EosioTransactionSignatureResponse(serializedTransaction, serializedContextFreeData, signatures, null)
     }
 
     override fun getAvailableKeys(): MutableList<String> {
