@@ -206,7 +206,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
             eosioAndroidKeyStoreSignatureProvider.signTransaction(transactionSignatureRequest)
 
         Assert.assertNull(transactionSignatureResponse.error)
-        Assert.assertEquals(TEST_CONST_SERIALIZED_TRANSACTION, transactionSignatureResponse.serializeTransaction)
+        Assert.assertEquals(TEST_CONST_SERIALIZED_TRANSACTION, transactionSignatureResponse.serializedTransaction)
         Assert.assertEquals(1, transactionSignatureResponse.signatures.size)
         Assert.assertNotEquals("", transactionSignatureResponse.signatures[0])
         Assert.assertTrue(transactionSignatureResponse.signatures[0].contains("SIG_R1_", true))
@@ -262,7 +262,7 @@ class EosioAndroidKeyStoreSignatureProviderInstrumentedTest {
             eosioAndroidKeyStoreSignatureProvider.signTransaction(transactionSignatureRequest)
 
         Assert.assertNull(transactionSignatureResponse.error)
-        Assert.assertEquals(TEST_CONST_SERIALIZED_TRANSACTION, transactionSignatureResponse.serializeTransaction)
+        Assert.assertEquals(TEST_CONST_SERIALIZED_TRANSACTION, transactionSignatureResponse.serializedTransaction)
         Assert.assertEquals(
             TEST_CONST_GET_AVAILABLE_KEY_MULTIPLE_KEY_AMOUNT,
             transactionSignatureResponse.signatures.size
